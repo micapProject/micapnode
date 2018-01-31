@@ -1,7 +1,10 @@
 'use  strict'
 
 var User=require('../models/user'),
-    conf=require('../config/global');
+    conf=require('../config/global'),
+    mongo=require('../database/conecion'),
+    db=mongo.db;
+
 const MongoClient = require('mongodb').MongoClient,
       assert = require('assert'),
       collection="user";
@@ -11,20 +14,21 @@ const MongoClient = require('mongodb').MongoClient,
 module.exports.save=function(req,res){
     var par=req.body;
     if(par.nombre && par.apellido  && par.sexo){
-        user=new User(par.nombre,par.apellido,par.sexo);
-        MongoClient.connect('mongodb://localhost:27017', (err, client) =>{
-            assert.equal(null, err);
-            console.log("Connected correctly to server");
+        if (!mongo.db) {
+            mongo.initDb(function(err){});
 
-            const db = client.db(conf.mongo.bd);
-            // Insert a single document
-            db.collection('warren').insertOne(user, function(err, r) {
+        }
+        if (mongo.db) {
+            user=new User(par.nombre,par.apellido,par.sexo);
+            var col = mongo.db.collection('counts').insertOne(user,function (err,r) {
                 assert.equal(null, err);
                 assert.equal(1, r.insertedCount);
-                console.log("gozu");
                 res.status(200).send({"user":"store"});
             });
-        });
+            // Create a document with request IP and current time of request
+        } else {
+            res.status(404).send({"user":"not store"});
+        }
     }
 }
 

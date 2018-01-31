@@ -1,5 +1,4 @@
-const http = require('http'),
-    MongoClient = require('mongodb').MongoClient,
+const
     app=require('./app'),
     conf=require('./config/global');
 
@@ -7,10 +6,6 @@ const http = require('http'),
         hostname = conf.app.hostname;
 
 
-
-MongoClient.connect('mongodb://localhost:27017/b1', function(err, db) {
-    if (err) throw err;
-    app.listen(port,()=>{
-        console.log("servidoer creado");
-    });
+app.listen(port,()=>{
+    console.log("servidoer creado");
 });
