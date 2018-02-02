@@ -1,11 +1,25 @@
 'use strict'
 
 class user{
+    constructor() {
+        this.names={
+            nombre:"nombre",
+            apellido:"apellido",
+            sexo:"sexo"
+        }
+        this.values={}
+    }
 
-    constructor(nombre, apellido, sexo) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.sexo = sexo;
+    crear(map){
+        for(var k in this.names){
+            var v=this.names[k];
+            if(map[k]){
+                this.values[k]=map[v];
+            }else{
+                return false;
+            }
+        }
+        return true;
     }
 }
 
