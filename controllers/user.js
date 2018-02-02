@@ -1,34 +1,25 @@
 'use  strict'
-
-var User=require('../models/user'),
-    conf=require('../config/global'),
-    mongo=require('../database/conecion'),
-    db=mongo.db;
-
-const MongoClient = require('mongodb').MongoClient,
-      assert = require('assert'),
-      collection="user";
-
-
+var User=require('../models/user');
 
 module.exports.save=function(req,res){
+    var mongo=require('../database/conecion'),
+    db=mongo.conn;
+
     var par=req.body;
     if(par.nombre && par.apellido  && par.sexo){
-        if (!mongo.db) {
+        if (!db){
+            console.log("iniciando de nuevo");
             mongo.initDb(function(err){});
-
         }
-        if (mongo.db) {
+        if (db) {
             user=new User(par.nombre,par.apellido,par.sexo);
-            var col = mongo.db.collection('counts').insertOne(user,function (err,r) {
-                assert.equal(null, err);
-                assert.equal(1, r.insertedCount);
+            var col =db.collection('counts').insertOne(user,function (err,r) {
                 res.status(200).send({"user":"store"});
             });
-            // Create a document with request IP and current time of request
-        } else {
-            res.status(404).send({"user":"not store"});
         }
+        else
+            res.status(404).send({"user":"not store"});
+
     }
 }
 
