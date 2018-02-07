@@ -1,10 +1,11 @@
 'use  strict'
 var User=require('../models/user'),
-    user=new User();
+    collection="user";
 
 module.exports.save=function(req,res){
     var mongo=require('../database/conecion'),
         db=mongo.conn;
+
     if(user.crear(req.body)){
         if (!db){
             console.log("iniciando de nuevo");
@@ -37,6 +38,61 @@ module.exports.get=function(req,res){
             console.log("sss",r);
             res.status(200).send(r);
         })
+    }
+    else
+        res.status(404).send({"user":"not store"});
+}
+module.exports.update=function(req,res){
+    var name=req.params.name;
+    var mongo=require('../database/conecion'),
+        db=mongo.conn;
+
+    if (!db){
+        console.log("iniciando bd de nuevo");
+        mongo.initDb(function(err){});
+    }
+    if (db) {
+        console.log({nombre:name});
+        db.collection('counts').findOne({nombre:name},function (err,r) {
+            console.log("sss",r);
+            res.status(200).send(r);
+        })
+    }
+    else
+        res.status(404).send({"user":"not store"});
+}
+module.exports.delete=function(req,res){
+    var name=req.params.name;
+    var mongo=require('../database/conecion'),
+        db=mongo.conn;
+
+    if (!db){
+        console.log("iniciando bd de nuevo");
+        mongo.initDb(function(err){});
+    }
+    if (db) {
+
+        db.collection('counts').removeOne({nombre:name},function (err,r) {
+            res.status(200).send({"user":"removed"});
+        });
+    }
+    else
+        res.status(404).send({"user":"not store"});
+}
+module.exports.delete=function(req,res){
+    var name=req.params.name;
+    var mongo=require('../database/conecion'),
+        db=mongo.conn;
+
+    if (!db){
+        console.log("iniciando bd de nuevo");
+        mongo.initDb(function(err){});
+    }
+    if (db) {
+
+        db.collection('counts').removeOne({nombre:name},function (err,r) {
+            res.status(200).send({"user":"removed"});
+        });
     }
     else
         res.status(404).send({"user":"not store"});

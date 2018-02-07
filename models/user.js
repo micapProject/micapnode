@@ -1,27 +1,21 @@
-'use strict'
+var validator = require('validator'),
+    addre =           require('./addres');
 
-class user{
-    constructor() {
-        this.names={
-            nombre:"nombre",
-            apellido:"apellido",
-            sexo:"sexo"
-        }
-        this.values={}
-    }
 
-    crear(map){
-        for(var k in this.names){
-            var v=this.names[k];
-            if(map[k]){
-                this.values[k]=map[v];
-            }else{
-                return false;
-            }
-        }
-        return true;
-    }
+names= {
+    "name": validator.isAscii,
+    "username": validator.isAscii,
+    "email": validator.isEmail,
+    "address": addre.IsAddres,
+    "phone": validator.isAscii,
+    "website": validator.isAscii,
 }
 
 
-module.exports=user;
+module.exports.IsUser=function (obj) {
+    for(x in names){
+        if(!obj[x] || !names[x](obj[x]))
+            return null
+    }
+    return obj;
+}
