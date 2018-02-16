@@ -5,8 +5,6 @@ const l3 = spawn('git', ['push','origin','master']);
 
 l2.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
-    ls.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-    });
+    console.log("ww")
 });
 
