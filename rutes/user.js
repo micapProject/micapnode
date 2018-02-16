@@ -3,9 +3,7 @@ var express=require('express'),
     UserController=require('../controllers/user');
 
 var api=express.Router();
-
-
 api.post("/user",UserController.save);
-api.get("/user/:name",UserController.get);
-api.delete("/user/:name",UserController.delete);
+api.get("/user",UserController.list);
+
 module.exports=api

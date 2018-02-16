@@ -1,99 +1,42 @@
 'use  strict'
 var User=require('../models/user'),
-    collection="user";
+    collection="user"
 
 module.exports.save=function(req,res){
     var mongo=require('../database/conecion'),
         db=mongo.conn;
-
-    if(user.crear(req.body)){
-        if (!db){
-            console.log("iniciando de nuevo");
+    var user=User.Create(req.body);
+    if(!user["error"]){
+        if (!db)
             mongo.initDb(function(err){});
-        }
-        if (db) {
 
-            var col =db.collection('counts').insertOne(user.values,function (err,r) {
-                res.status(200).send({"user":"store"});
+        if (db) {
+           db.collection(collection).insertOne(user,function (err) {
+                if(err)
+                    res.status(500).send(err);
+                res.status(201).send({"user":"store"});
             });
         }
         else
-            res.status(404).send({"user":"not store"});
+            res.status(500).send({"user":"not store"});
     }else{
-        res.status(404).send({"user":"not store, daate invalidate"});
+        res.status(400).send(user);
     }
-}
-module.exports.get=function(req,res){
-    var name=req.params.name;
+};
+module.exports.list=function(req,res){
     var mongo=require('../database/conecion'),
         db=mongo.conn;
 
-    if (!db){
-        console.log("iniciando bd de nuevo");
-        mongo.initDb(function(err){});
-    }
-    if (db) {
-        console.log({nombre:name});
-        db.collection('counts').findOne({nombre:name},function (err,r) {
-            console.log("sss",r);
-            res.status(200).send(r);
-        })
-    }
-    else
-        res.status(404).send({"user":"not store"});
-}
-module.exports.update=function(req,res){
-    var name=req.params.name;
-    var mongo=require('../database/conecion'),
-        db=mongo.conn;
+        if (!db)
+            mongo.initDb(function(err){});
 
-    if (!db){
-        console.log("iniciando bd de nuevo");
-        mongo.initDb(function(err){});
-    }
-    if (db) {
-        console.log({nombre:name});
-        db.collection('counts').findOne({nombre:name},function (err,r) {
-            console.log("sss",r);
-            res.status(200).send(r);
-        })
-    }
-    else
-        res.status(404).send({"user":"not store"});
-}
-module.exports.delete=function(req,res){
-    var name=req.params.name;
-    var mongo=require('../database/conecion'),
-        db=mongo.conn;
+        if (db) {
+            db.collection(collection).find({}).toArray(function (err,data) {
+                if(err) throw err;
+                res.status(201).send(data);
+            });
+        }
+        else
+            res.status(500).send({"user":"not store"});
 
-    if (!db){
-        console.log("iniciando bd de nuevo");
-        mongo.initDb(function(err){});
-    }
-    if (db) {
-
-        db.collection('counts').removeOne({nombre:name},function (err,r) {
-            res.status(200).send({"user":"removed"});
-        });
-    }
-    else
-        res.status(404).send({"user":"not store"});
-}
-module.exports.delete=function(req,res){
-    var name=req.params.name;
-    var mongo=require('../database/conecion'),
-        db=mongo.conn;
-
-    if (!db){
-        console.log("iniciando bd de nuevo");
-        mongo.initDb(function(err){});
-    }
-    if (db) {
-
-        db.collection('counts').removeOne({nombre:name},function (err,r) {
-            res.status(200).send({"user":"removed"});
-        });
-    }
-    else
-        res.status(404).send({"user":"not store"});
-}
+};
