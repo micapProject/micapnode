@@ -1,30 +1,47 @@
-var validator = require('validator'),
-    addre = require('./addres');
+var validator = require('../tools/validators'),
+    objectId=require('mongodb').ObjectID;
+
+const id = "_id",
+    username = "username",
+    email = "email",
+    password = "password",
+    persona = "persona",
+    role="role";
+
+module.exports.create = function (obj) {
+    var res = {};
+    if(!obj[id])res[id]=new objectId();
+    else
+        if (obj[id] && validator.isId(obj[id])) res[id] = obj[id];
+        else return {"error": id + "invalido"};
+
+    if (obj[username] && validator.isNombre(obj[username])) res[username] = obj[username];
+    else return {"error": username + "invalido"};
+
+    if (obj[email] && validator.isEmail(obj[email])) res[email] = obj[email];
+    else return {"error": email + "invalido"};
+
+    if (obj[password] && validator.isPassword(obj[password])) res[password] = obj[password];
+    else return {"error": password + "invalido"};
 
 
-const ATRIBUTOS= {
-    "nombre": validator.isAscii,
-    "apellido": validator.isAscii,
-    "edad": validator.isNumeric,
-    "addres": addre.Create
-}
+    if(obj[persona])
+        if(validator.isId(obj[persona])) res[persona] = obj[persona];
+        else return {"error": persona + "invalido"};
 
+    if(obj[role])
+        if(validator.isRole(obj[role])) res[role] = obj[role];
+        else return {"error": role + "invalido"};
+    else
+        res[role] = "R_user";
 
-module.exports.Create=function (obj) {
-    var newObj={};
-    for(var x in ATRIBUTOS){
-
-        var aux=ATRIBUTOS[x](obj[x]);
-        if(!obj[x] || !aux  || aux["error"])
-            if (aux["error"]){
-                aux["error"]=aux["error"]+" in "+x;
-                return aux;
-            }
-            else{
-                return {"error":x+" invalido"};
-            }
-        else
-            newObj[x] = obj[x];
-    }
-    return newObj;
+    return res;
+};
+module.exports.attr={
+    id :"_id",
+    username : "username",
+    email : "email",
+    password : "password",
+    persona : "persona",
+    role:"role"
 }
